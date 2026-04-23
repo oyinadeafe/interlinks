@@ -62,7 +62,7 @@ export async function createLink(
   revalidatePath("/dashboard/links");
   return {};
 }
-export async function toggleLink(id: string, isEnabled: boolean) {
+export async function toggleLink(id: string, isEnabled: boolean, _formData: FormData): Promise<void> {
   const user = await requireUser()
   const supabase = await createClient()
   const { error } = await supabase
@@ -70,12 +70,11 @@ export async function toggleLink(id: string, isEnabled: boolean) {
     .update({ is_enabled: isEnabled })
     .eq("id", id)
     .eq("profile_id", user.id)
-  if (error) return { error: error.message }
+  if (error) throw new Error(error.message)
   revalidatePath("/dashboard/links")
-  return {}
 }
 
-export async function deleteLink(id: string) {
+export async function deleteLink(id: string, _formData: FormData): Promise<void> {
   const user = await requireUser()
   const supabase = await createClient()
   const { error } = await supabase
@@ -83,9 +82,8 @@ export async function deleteLink(id: string) {
     .delete()
     .eq("id", id)
     .eq("profile_id", user.id)
-  if (error) return { error: error.message }
+  if (error) throw new Error(error.message)
   revalidatePath("/dashboard/links")
-  return {}
 }
 
 export async function reorderLinks(orderedIds: string[]) {

@@ -6,23 +6,19 @@ import { createClient } from "@/lib/supabase/server";
 
 export type SettingsState = { error?: string; success?: boolean };
 
-export async function updateSettings(
-  _prev: SettingsState,
-  formData: FormData,
-): Promise<SettingsState> {
+export async function updateSettings(formData: FormData): Promise<void> {
   const user = await requireUser();
   const supabase = await createClient();
 
   const display_name = (formData.get("display_name") as string)?.trim();
   const username = (formData.get("username") as string)?.trim().toLowerCase();
 
-  if (!display_name) return { error: "Display name cannot be empty." };
-  if (!username) return { error: "Username cannot be empty." };
+  if (!display_name) throw new Error("Display name cannot be empty.");
+  if (!username) throw new Error("Username cannot be empty.");
   if (!/^[a-z0-9_]{3,30}$/.test(username)) {
-    return {
-      error:
-        "Username must be 3–30 characters: lowercase letters, numbers, and underscores only.",
-    };
+    throw new Error(
+      "Username must be 3–30 characters: lowercase letters, numbers, and underscores only."
+    );
   }
 
   // Check username is not already taken by someone else
@@ -33,15 +29,14 @@ export async function updateSettings(
     .neq("id", user.id)
     .maybeSingle();
 
-  if (existing) return { error: "That username is already taken." };
+  if (existing) throw new Error("That username is already taken.");
 
   const { error } = await supabase
     .from("profiles")
     .update({ display_name, username })
     .eq("id", user.id);
 
-  if (error) return { error: error.message };
+  if (error) throw new Error(error.message);
 
   revalidatePath("/dashboard/settings");
-  return { success: true };
 }

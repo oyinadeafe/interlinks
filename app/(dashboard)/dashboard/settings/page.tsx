@@ -52,7 +52,7 @@ export default async function SettingsPage() {
           </div>
 
           {/* Editable form — calls updateSettings server action */}
-          <form action={updateSettings.bind(null, {})} className="flex flex-col gap-4">
+          <form action={updateSettings} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <Label htmlFor="display_name">Display name</Label>
               <Input
