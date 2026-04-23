@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { FREE_PLAN_LINK_LIMIT } from "@/lib/constants";
 import { AddLinkDialog } from "./add-link-dialog";
+import { toggleLink, deleteLink } from "./actions"
 
 export const metadata: Metadata = { title: "Links" };
 
@@ -55,18 +56,24 @@ export default async function LinksPage() {
         <div className="flex flex-col gap-2">
           {links!.map((link) => (
             <Card key={link.id}>
-              <CardContent className="flex items-center justify-between gap-4 p-4">
-                <div className="flex flex-col">
-                  <span className="font-medium">{link.title}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {link.url}
-                  </span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {link.click_count} clicks
-                </span>
-              </CardContent>
-            </Card>
+  <CardContent className="flex items-center justify-between gap-4 p-4">
+    <div className="flex flex-col">
+      <span className="font-medium">{link.title}</span>
+      <span className="text-xs text-muted-foreground">{link.url}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <span className="text-xs text-muted-foreground">{link.click_count} clicks</span>
+      <form action={toggleLink.bind(null, link.id, !link.is_enabled)}>
+        <button type="submit" className="text-xs underline">
+          {link.is_enabled ? "Disable" : "Enable"}
+        </button>
+      </form>
+      <form action={deleteLink.bind(null, link.id)}>
+        <button type="submit" className="text-xs text-red-500 underline">Delete</button>
+      </form>
+    </div>
+  </CardContent>
+</Card>
           ))}
         </div>
       )}

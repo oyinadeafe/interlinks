@@ -62,3 +62,40 @@ export async function createLink(
   revalidatePath("/dashboard/links");
   return {};
 }
+export async function toggleLink(id: string, isEnabled: boolean) {
+  const user = await requireUser()
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("links")
+    .update({ is_enabled: isEnabled })
+    .eq("id", id)
+    .eq("profile_id", user.id)
+  if (error) return { error: error.message }
+  revalidatePath("/dashboard/links")
+  return {}
+}
+
+export async function deleteLink(id: string) {
+  const user = await requireUser()
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("links")
+    .delete()
+    .eq("id", id)
+    .eq("profile_id", user.id)
+  if (error) return { error: error.message }
+  revalidatePath("/dashboard/links")
+  return {}
+}
+
+export async function reorderLinks(orderedIds: string[]) {
+  const user = await requireUser()
+  const supabase = await createClient()
+  await Promise.all(
+    orderedIds.map((id, position) =>
+      supabase.from("links").update({ position }).eq("id", id).eq("profile_id", user.id)
+    )
+  )
+  revalidatePath("/dashboard/links")
+  return {}
+}
