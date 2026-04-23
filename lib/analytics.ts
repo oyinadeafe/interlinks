@@ -2,12 +2,12 @@
  * Click & pageview analytics.
  *
  * The PRD calls for ClickHouse as the analytics store for high-write
- * throughput. For scaffolding we keep the interface narrow and stub the write
- * path — swap `recordEvent` for a ClickHouse HTTP insert (or a queue) when
- * you wire it up.
+ * throughput. For v1 we write to the Supabase `link_click_events` table.
+ * Swap `recordEvent` for a ClickHouse HTTP insert when you need the throughput.
  */
 
 import { UAParser } from "ua-parser-js";
+import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export type ClickEvent = {
   profile_id: string;
@@ -77,8 +77,7 @@ export function parseDevice(userAgent: string | null): ClickEvent["device"] {
 }
 
 /**
- * Cheap bot filter. Pairs well with Vercel BotID in production — this just
- * catches the obvious crawlers so free-tier analytics stay honest.
+ * Cheap bot filter. Pairs with Vercel BotID in production.
  */
 export function isLikelyBot(userAgent: string | null): boolean {
   if (!userAgent) return true;
@@ -88,30 +87,27 @@ export function isLikelyBot(userAgent: string | null): boolean {
 }
 
 /**
- * TODO: swap for a real ClickHouse insert once the cluster is provisioned.
- *
- * For now this writes to the Supabase `link_click_events` table (defined in
- * the initial migration) so the rest of the app can be built end-to-end.
- * Move to ClickHouse when you need the write throughput.
+ * Write a click or pageview event to Supabase.
+ * Swap for ClickHouse HTTP insert when you need higher write throughput.
  */
 export async function recordEvent(event: ClickEvent): Promise<void> {
   if (process.env.NODE_ENV !== "production") {
-    console.log("[analytics] recordEvent", event)
+    console.log("[analytics] recordEvent", event);
   }
-  const { createClient } = await import("@supabase/supabase-js")
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-  await supabase.from("link_click_events").insert({
-    profile_id: event.profile_id,
-    link_id: event.link_id ?? null,
-    event_type: event.event_type,
-    referrer_platform: event.referrer_platform,
-    device: event.device,
-    created_at: event.created_at,
-  })
-}
-  // Intentionally not implemented yet — left as a scaffold hook.
+
+  try {
+    const supabase = createServiceRoleClient();
+    await supabase.from("link_click_events").insert({
+      profile_id: event.profile_id,
+      link_id: event.link_id ?? null,
+      event_type: event.event_type,
+      referrer_platform: event.referrer_platform,
+      device: event.device,
+      country: event.country,
+      created_at: event.created_at,
+    });
+  } catch (err) {
+    // Never throw from analytics — a failed write must not break the page
+    console.error("[analytics] recordEvent failed", err);
+  }
 }

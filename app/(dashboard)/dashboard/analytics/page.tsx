@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/supabase/require-user";
+import { createClient } from "@/lib/supabase/server";
 import {
   Card,
   CardContent,
@@ -11,36 +12,39 @@ import {
 export const metadata: Metadata = { title: "Analytics" };
 
 export default async function AnalyticsPage() {
-  const user = await requireUser()
-  const supabase = await createClient()
+  const user = await requireUser();
+  const supabase = await createClient();
 
-  const since7d = new Date(Date.now() - 7 * 86400_000).toISOString()
+  const since7d = new Date(Date.now() - 7 * 86_400_000).toISOString();
+  const since30d = new Date(Date.now() - 30 * 86_400_000).toISOString();
 
-  const { count: views } = await supabase
-    .from("link_click_events")
-    .select("id", { count: "exact", head: true })
-    .eq("profile_id", user.id)
-    .eq("event_type", "page_view")
-    .gte("created_at", since7d)
-
-  const { count: clicks } = await supabase
-    .from("link_click_events")
-    .select("id", { count: "exact", head: true })
-    .eq("profile_id", user.id)
-    .eq("event_type", "link_click")
-    .gte("created_at", since7d)
+  const [{ count: views }, { count: clicks }, { count: clicks30d }] =
+    await Promise.all([
+      supabase
+        .from("link_click_events")
+        .select("id", { count: "exact", head: true })
+        .eq("profile_id", user.id)
+        .eq("event_type", "page_view")
+        .gte("created_at", since7d),
+      supabase
+        .from("link_click_events")
+        .select("id", { count: "exact", head: true })
+        .eq("profile_id", user.id)
+        .eq("event_type", "link_click")
+        .gte("created_at", since7d),
+      supabase
+        .from("link_click_events")
+        .select("id", { count: "exact", head: true })
+        .eq("profile_id", user.id)
+        .eq("event_type", "link_click")
+        .gte("created_at", since30d),
+    ]);
 
   const stats = [
     { label: "Page views (7d)", value: views ?? 0 },
     { label: "Link clicks (7d)", value: clicks ?? 0 },
-  ]
-  // ... rest of JSX — replace "—" values with the real ones
-  // TODO: read aggregates from Supabase (v1) / ClickHouse (v2) and render.
-  const stats = [
-    { label: "Page views (7d)", value: "—" },
-    { label: "Link clicks (7d)", value: "—" },
-    { label: "Top referrer", value: "—" },
-    { label: "Mobile share", value: "—" },
+    { label: "Link clicks (30d)", value: clicks30d ?? 0 },
+    { label: "Avg clicks/day", value: Math.round((clicks30d ?? 0) / 30) },
   ];
 
   return (
@@ -66,13 +70,14 @@ export default async function AnalyticsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Per-link breakdown</CardTitle>
-          <CardDescription>Clicks by link over the last 30 days.</CardDescription>
+          <CardDescription>
+            Clicks by link over the last 30 days.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Analytics chart coming soon. Wire this up to the aggregates from
-            the <code>link_click_events</code> table (or your ClickHouse
-            cluster once that lands).
+            Connect your Supabase project to see live data here. Events are
+            tracked via the <code>link_click_events</code> table.
           </p>
         </CardContent>
       </Card>
