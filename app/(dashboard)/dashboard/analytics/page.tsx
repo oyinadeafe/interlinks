@@ -11,8 +11,30 @@ import {
 export const metadata: Metadata = { title: "Analytics" };
 
 export default async function AnalyticsPage() {
-  await requireUser();
+  const user = await requireUser()
+  const supabase = await createClient()
 
+  const since7d = new Date(Date.now() - 7 * 86400_000).toISOString()
+
+  const { count: views } = await supabase
+    .from("link_click_events")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", user.id)
+    .eq("event_type", "page_view")
+    .gte("created_at", since7d)
+
+  const { count: clicks } = await supabase
+    .from("link_click_events")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", user.id)
+    .eq("event_type", "link_click")
+    .gte("created_at", since7d)
+
+  const stats = [
+    { label: "Page views (7d)", value: views ?? 0 },
+    { label: "Link clicks (7d)", value: clicks ?? 0 },
+  ]
+  // ... rest of JSX — replace "—" values with the real ones
   // TODO: read aggregates from Supabase (v1) / ClickHouse (v2) and render.
   const stats = [
     { label: "Page views (7d)", value: "—" },

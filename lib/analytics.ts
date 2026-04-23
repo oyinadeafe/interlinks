@@ -96,7 +96,22 @@ export function isLikelyBot(userAgent: string | null): boolean {
  */
 export async function recordEvent(event: ClickEvent): Promise<void> {
   if (process.env.NODE_ENV !== "production") {
-    console.log("[analytics] recordEvent", event);
+    console.log("[analytics] recordEvent", event)
   }
+  const { createClient } = await import("@supabase/supabase-js")
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+  await supabase.from("link_click_events").insert({
+    profile_id: event.profile_id,
+    link_id: event.link_id ?? null,
+    event_type: event.event_type,
+    referrer_platform: event.referrer_platform,
+    device: event.device,
+    created_at: event.created_at,
+  })
+}
   // Intentionally not implemented yet — left as a scaffold hook.
 }

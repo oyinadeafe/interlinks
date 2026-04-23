@@ -70,10 +70,14 @@ export default async function BillingPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" disabled>
-                {/* TODO: wire to /api/billing/checkout */}
-                Upgrade (coming soon)
-              </Button>
+              <form action={async () => {
+  "use server"
+  // redirect to checkout handled client-side
+}}>
+  <Button className="w-full" formAction={`/api/billing/checkout`}>
+    Upgrade to {plan.name}
+  </Button>
+</form>
             </CardContent>
           </Card>
         ))}
