@@ -3,6 +3,7 @@ import { ArrowRight, BarChart3, Globe2, Palette, Wallet } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
+import { HeroPhoneMockup } from "@/components/hero-phone-mockup";
 
 const features = [
   {
@@ -57,7 +58,7 @@ export default function Home() {
           <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-primary/10 blur-3xl" />
           <div className="mx-auto w-full max-w-6xl py-20 sm:py-24">
             <div className="relative overflow-hidden rounded-[2rem] border border-border/70 bg-background/95 p-6 sm:p-10 shadow-[0_40px_120px_-60px_rgba(15,23,42,0.18)]">
-              <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+              <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
                 <div className="max-w-3xl space-y-6">
                   <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                     Built for Nigerian creators
@@ -76,6 +77,9 @@ export default function Home() {
                       See what you get
                     </Link>
                   </div>
+                </div>
+                <div className="relative">
+                  <HeroPhoneMockup />
                 </div>
               </div>
             </div>

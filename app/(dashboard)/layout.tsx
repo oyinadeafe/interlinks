@@ -12,6 +12,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { APP_NAME } from "@/lib/constants";
 import { SignOutButton } from "./_components/signout-button";
+import { DashboardSidebar } from "./_components/dashboard-sidebar";
+import { DashboardMobileNav } from "./_components/dashboard-mobile-nav";
 
 const nav = [
   { href: "/dashboard/links", label: "Links", icon: LinkIcon },
@@ -49,6 +51,7 @@ export default async function DashboardLayout({
             {APP_NAME}
           </Link>
           <div className="flex items-center gap-3">
+            <DashboardMobileNav nav={nav} />
             {profile?.username ? (
               <a
                 href={`/${profile.username}`}
@@ -68,18 +71,7 @@ export default async function DashboardLayout({
       </header>
       <div className="mx-auto flex w-full max-w-6xl flex-1 gap-8 px-6 py-8">
         <aside className="hidden w-48 shrink-0 md:block">
-          <nav className="flex flex-col gap-1 text-sm">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <DashboardSidebar nav={nav} />
         </aside>
         <main className="flex-1">{children}</main>
       </div>
