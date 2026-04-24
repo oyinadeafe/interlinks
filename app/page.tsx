@@ -35,7 +35,7 @@ export default function Home() {
           <Link href="/" className="font-semibold tracking-tight">
             {APP_NAME}
           </Link>
-          <nav className="flex items-center gap-2">
+          <nav className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
             <Link
               href="/login"
               className={buttonVariants({ variant: "ghost", size: "sm" })}
@@ -55,8 +55,8 @@ export default function Home() {
       <main className="flex flex-1 flex-col">
         <section className="relative overflow-hidden px-4 sm:px-6">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-primary/10 blur-3xl" />
-          <div className="mx-auto w-full max-w-6xl py-28">
-            <div className="relative overflow-hidden rounded-[2rem] border border-border/70 bg-background/95 p-10 shadow-[0_40px_120px_-60px_rgba(15,23,42,0.18)]">
+          <div className="mx-auto w-full max-w-6xl py-20 sm:py-24">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border/70 bg-background/95 p-6 sm:p-10 shadow-[0_40px_120px_-60px_rgba(15,23,42,0.18)]">
               <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
                 <div className="max-w-3xl space-y-6">
                   <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -68,27 +68,13 @@ export default function Home() {
                   <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
                     {APP_NAME} is the link-in-bio tool designed for Nigerian creators. Fast on 3G, priced in Naira, and built to show analytics that actually reflect how your audience finds you.
                   </p>
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="grid w-full gap-3 sm:max-w-max sm:grid-flow-col sm:auto-cols-min">
                     <Link href="/signup" className={buttonVariants({ size: "lg" })}>
                       Claim your handle <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                     <Link href="#features" className={buttonVariants({ size: "lg", variant: "outline" })}>
                       See what you get
                     </Link>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-3xl border border-border/70 bg-muted/70 px-4 py-3 text-sm text-muted-foreground shadow-sm">
-                      <p className="font-semibold text-foreground">Fast on 3G</p>
-                      <p className="mt-1">Lightweight pages built for low-data conditions.</p>
-                    </div>
-                    <div className="rounded-3xl border border-border/70 bg-muted/70 px-4 py-3 text-sm text-muted-foreground shadow-sm">
-                      <p className="font-semibold text-foreground">Local payments</p>
-                      <p className="mt-1">Paystack billing in Naira with a seamless checkout.</p>
-                    </div>
-                    <div className="rounded-3xl border border-border/70 bg-muted/70 px-4 py-3 text-sm text-muted-foreground shadow-sm">
-                      <p className="font-semibold text-foreground">Actionable analytics</p>
-                      <p className="mt-1">Know which links work and where your audience comes from.</p>
-                    </div>
                   </div>
                 </div>
               </div>
