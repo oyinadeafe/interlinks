@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { requireUser } from "@/lib/supabase/require-user";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { FREE_PLAN_LINK_LIMIT } from "@/lib/constants";
 import { AddLinkDialog } from "./add-link-dialog";
-import { toggleLink, deleteLink } from "./actions"
+import { toggleLink, deleteLink } from "./actions";
+import { EditLinkDialog } from "./edit-link-dialog";
+import { Eye, EyeOff, Edit3, Trash2 } from "lucide-react";
 
 export const metadata: Metadata = { title: "Links" };
 
@@ -56,24 +59,45 @@ export default async function LinksPage() {
         <div className="flex flex-col gap-2">
           {links!.map((link) => (
             <Card key={link.id}>
-  <CardContent className="flex items-center justify-between gap-4 p-4">
-    <div className="flex flex-col">
-      <span className="font-medium">{link.title}</span>
-      <span className="text-xs text-muted-foreground">{link.url}</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-muted-foreground">{link.click_count} clicks</span>
-      <form action={toggleLink.bind(null, link.id, !link.is_enabled)}>
-        <button type="submit" className="text-xs underline">
-          {link.is_enabled ? "Disable" : "Enable"}
-        </button>
-      </form>
-      <form action={deleteLink.bind(null, link.id)}>
-        <button type="submit" className="text-xs text-red-500 underline">Delete</button>
-      </form>
-    </div>
-  </CardContent>
-</Card>
+              <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium">{link.title}</span>
+                  <span className="text-xs text-muted-foreground">{link.url}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-border/70 bg-muted/70 px-2 py-1 text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                    {link.is_enabled ? "Enabled" : "Disabled"}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{link.click_count} clicks</span>
+                  <EditLinkDialog id={link.id} title={link.title} url={link.url} />
+                  <form action={toggleLink.bind(null, link.id, !link.is_enabled)}>
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={link.is_enabled ? "Disable link" : "Enable link"}
+                    >
+                      {link.is_enabled ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </form>
+                  <form action={deleteLink.bind(null, link.id)}>
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-destructive"
+                      aria-label="Delete link"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

@@ -62,6 +62,39 @@ export async function createLink(
   revalidatePath("/dashboard/links");
   return {};
 }
+
+export async function updateLink(
+  id: string,
+  _prev: CreateLinkState,
+  formData: FormData,
+): Promise<CreateLinkState> {
+  const user = await requireUser();
+  const supabase = await createClient();
+
+  const parsed = linkSchema.safeParse({
+    title: formData.get("title"),
+    url: formData.get("url"),
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
+
+  const { error } = await supabase
+    .from("links")
+    .update({
+      title: parsed.data.title,
+      url: parsed.data.url,
+    })
+    .eq("id", id)
+    .eq("profile_id", user.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/links");
+  return {};
+}
+
 export async function toggleLink(id: string, isEnabled: boolean, _formData: FormData): Promise<void> {
   const user = await requireUser()
   const supabase = await createClient()
