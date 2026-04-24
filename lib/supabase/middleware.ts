@@ -16,7 +16,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.next({ request });
   }
 
-  let supabaseResponse = NextResponse.next({ request });
+  const { pathname } = request.nextUrl;
+  const isAuthRoute =
+    pathname.startsWith("/login") || pathname.startsWith("/signup");
+
+  if (isAuthRoute) {
+    return NextResponse.next();
+  }
+
+  let supabaseResponse = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,10 +35,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          supabaseResponse = NextResponse.next({ request });
+          supabaseResponse = NextResponse.next();
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
@@ -46,10 +51,6 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-
-  const isAuthRoute =
-    pathname.startsWith("/login") || pathname.startsWith("/signup");
   const isDashboardRoute = pathname.startsWith("/dashboard");
 
   if (!user && isDashboardRoute) {

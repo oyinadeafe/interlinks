@@ -69,6 +69,9 @@ export default function Home() {
                   <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
                     {APP_NAME} is the link-in-bio tool designed for Nigerian creators. Fast on 3G, priced in Naira, and built to show analytics that actually reflect how your audience finds you.
                   </p>
+                  <p className="text-sm text-muted-foreground">
+                    The phone preview is an example only — it shows placeholder links and a sample handle, not your live data.
+                  </p>
                   <div className="grid w-full gap-3 sm:max-w-max sm:grid-flow-col sm:auto-cols-min">
                     <Link href="/signup" className={buttonVariants({ size: "lg" })}>
                       Claim your handle <ArrowRight className="ml-2 h-4 w-4" />

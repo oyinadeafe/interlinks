@@ -11,7 +11,7 @@ import { updateSession } from "@/lib/supabase/middleware";
  * lives in `lib/supabase/require-user.ts`, which every protected layout/page
  * calls. Proxy is best-effort UX — defense in depth only.
  */
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   return updateSession(request);
 }
 

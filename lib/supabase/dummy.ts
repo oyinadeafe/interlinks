@@ -69,6 +69,7 @@ type DummyResult<T> = { data: T; error: null };
 class DummyBuilder {
   private operation: "select" | "insert" | "update" | "delete" | "upsert" =
     "select";
+  private condition?: { col: string; val: unknown };
 
   constructor(private readonly table: string) {}
 
@@ -93,7 +94,8 @@ class DummyBuilder {
     return this;
   }
 
-  eq(_col: string, _val: unknown) {
+  eq(col: string, val: unknown) {
+    this.condition = { col, val };
     return this;
   }
   neq(_col: string, _val: unknown) {
@@ -146,6 +148,11 @@ class DummyBuilder {
   private resolveRow(): unknown {
     switch (this.table) {
       case "profiles":
+        if (this.condition?.col === "username") {
+          return this.condition.val === DUMMY_PROFILE.username
+            ? DUMMY_PROFILE
+            : null;
+        }
         return DUMMY_PROFILE;
       case "links":
         return DUMMY_LINKS[0] ?? null;
