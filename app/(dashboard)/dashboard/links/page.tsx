@@ -19,7 +19,7 @@ export default async function LinksPage() {
     .from("profiles")
     .select("plan")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   const { data: links } = await supabase
     .from("links")

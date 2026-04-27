@@ -23,7 +23,7 @@ export default async function AppearancePage() {
     .from("profiles")
     .select("display_name, bio, avatar_url, theme")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   const theme =
     (profile?.theme as { background?: string; foreground?: string } | null) ?? {};
