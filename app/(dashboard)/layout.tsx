@@ -31,11 +31,12 @@ export default async function DashboardLayout({
 }) {
   const user = await requireUser();
   const supabase = await createClient();
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("username, display_name")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();   // ← maybeSingle() instead of single() — won't throw if no row
 
   const initial =
     profile?.display_name?.charAt(0) ??
@@ -53,14 +54,14 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-3">
             <DashboardMobileNav nav={nav} />
             {profile?.username ? (
-              <a
+              <Link
                 href={`/${profile.username}`}
                 target="_blank"
                 rel="noreferrer"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 interlinks.ng/{profile.username}
-              </a>
+              </Link>
             ) : null}
             <Avatar className="h-8 w-8">
               <AvatarFallback>{initial.toUpperCase()}</AvatarFallback>
