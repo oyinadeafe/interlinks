@@ -16,12 +16,12 @@ import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { DashboardMobileNav } from "./_components/dashboard-mobile-nav";
 
 const nav = [
-  { href: "/dashboard/links", label: "Links", icon: LinkIcon },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/appearance", label: "Appearance", icon: Palette },
-  { href: "/dashboard/domain", label: "Domain", icon: Globe },
-  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/links", label: "Links", icon: "LinkIcon" },
+  { href: "/dashboard/analytics", label: "Analytics", icon: "BarChart3" },
+  { href: "/dashboard/appearance", label: "Appearance", icon: "Palette" },
+  { href: "/dashboard/domain", label: "Domain", icon: "Globe" },
+  { href: "/dashboard/billing", label: "Billing", icon: "CreditCard" },
+  { href: "/dashboard/settings", label: "Settings", icon: "Settings" },
 ];
 
 export default async function DashboardLayout({

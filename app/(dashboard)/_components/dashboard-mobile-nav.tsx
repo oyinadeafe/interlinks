@@ -3,14 +3,31 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import {
+  BarChart3,
+  CreditCard,
+  Globe,
+  Link as LinkIcon,
+  Menu,
+  Palette,
+  Settings,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { LucideIcon } from "lucide-react";
 
 type NavItem = {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: string;
+};
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  LinkIcon,
+  BarChart3,
+  Palette,
+  Globe,
+  CreditCard,
+  Settings,
 };
 
 export function DashboardMobileNav({ nav }: { nav: NavItem[] }) {
@@ -51,6 +68,7 @@ export function DashboardMobileNav({ nav }: { nav: NavItem[] }) {
             <div className="flex flex-col gap-1">
               {nav.map((item) => {
                 const isActive = pathname?.startsWith(item.href);
+                const Icon = iconMap[item.icon];
                 return (
                   <Link
                     key={item.href}
@@ -64,7 +82,7 @@ export function DashboardMobileNav({ nav }: { nav: NavItem[] }) {
                         : "text-muted-foreground hover:bg-muted hover:text-foreground")
                     }
                   >
-                    <item.icon className="h-4 w-4" />
+                    {Icon && <Icon className="h-4 w-4" />}
                     {item.label}
                   </Link>
                 );
