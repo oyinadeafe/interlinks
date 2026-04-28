@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   },
   description:
     "A customisable link-in-bio landing page builder with real-time analytics, built for Nigerian creators. Paid in Naira.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
